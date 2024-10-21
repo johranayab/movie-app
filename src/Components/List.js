@@ -1,36 +1,55 @@
-import React, { Component } from "react";
-import { movies } from "./getMovies";
-
-export default class List extends Component {
-  render() {
-    let allmovies = movies.results;
-    return (
-      <div>
-        <h3 className="trending  display-3"> trending</h3>
-
-        <div className="movies-list">
-          {allmovies.map((movieObj) => {
-            return (
-              <div class="card movie-card">
+import React, { Component } from 'react'
+import { movies } from './getMovies'
+import axios from "axios";
+export default class Banner extends Component {
+    constructor() {
+        super();
+        this.state = {
+          movies:[]
+        }
+      }
+      async componentDidMount() {
+        console.log("CDM is called ");
+       
+        let data = await axios.get(
+          "https://api.themoviedb.org/3/movie/popular?api_key=1749ee86927c862e6ac40360e3eb8c0d&language=en-US&page=1"
+        );
+        console.log(data.data);
+        this.setState({
+          movies: [...data.data.results],
+        });
+      }
+      render() {
+       
+        // let movie = movies.results;
+        return (
+          <>
+            {this.state.movies.length == 0 ? (
+              <div className="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            ) : (
+              <div className="card banner-card">
                 <img
-                  src={`https://image.tmdb.org/t/p/original/${movieObj.backdrop_path}`}
-                  class="card-img-top movie-img"
+                
+                  src={`https://image.tmdb.org/t/p/original/${this.state.movies[0].backdrop_path}`}
+                  className="card-img-top banner-img"
                   alt="..."
                 />
-                <div class="card-body">
-                  <h5 class="card-title movie-title">
-                    {movieObj.original_title}
-                  </h5>
-
-                  <a href="#" class="btn btn-info  movie-button">
-                    Add as Favourites
-                  </a>
-                </div>
+    
+                
+                <h5 className="card-title banner-title">
+                  {this.state.movies[0].original_title}
+                </h5>
+                <p className="card-text banner-text">
+                  {this.state.movies[0].overview}
+                </p>
+                {/* <a href="#" class="btn btn-primary">
+                Go somewhere
+              </a> */}
               </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  } 
-}
+            )}
+          </>
+        );
+      }
+    }
